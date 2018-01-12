@@ -1,0 +1,99 @@
+/* 
+Customer placing an order:
+	Input: phone ID of the phone, quantity, shipping method, credit card number, expiration year and expiration month.
+	Output: If the phone ID does not exist, print out message “phone out of stock”; if the phone ID exists, print out the order date, order ID, model of the phone being ordered, quantity, order status, and total due. 
+	Other actions: Add order information in the orders table and decrease number of stock of that phone by order quantity in the inventory table.
+*/
+
+-- create sequence to automatically generate order id during insert
+DROP SEQUENCE oid_seq;
+CREATE SEQUENCE oid_seq START WITH 1;
+
+-- create place order procedure
+CREATE OR REPLACE PROCEDURE place_order
+	(
+	email in varchar,	
+phoneID in int,
+quantity in int,
+shipMethod in varchar,
+creditCard in varchar,
+expirationYear in int,
+expirationMonth in int
+	)
+IS
+	orderDate date;
+	orderStatus varchar(15);
+	totalDue number;
+	customerID int;
+	orderID int;
+existsPhone number;
+price number;
+phoneModel varchar(20);
+inventoryID int;
+numberInStock int;
+shipPrice number;
+shipDate date;
+BEGIN
+	-- check if phone exists	
+select 1 into existsPhone from dual
+	where exists (select Phone_ID from phone where Phone_ID=phoneID);	
+
+	-- if the phone exists, insert order information in the orders table
+	-- get the orderID	
+select oid_seq.nextval into orderID from dual;
+
+-- get order and ship date
+orderDate := sysdate;
+shipDate := sysdate;
+
+-- update order status
+orderStatus := 'order placed';
+
+-- get phone information based on phone ID
+select Phone_Model, Phone_Price, Inventory_ID into phoneModel, price, inventoryID from phone where Phone_ID=phoneID;
+
+-- get the ship price based on the ship method
+select Ship_Price into shipPrice from shipping where Ship_Method=shipMethod;
+
+-- calculate the total due
+totalDue := price * quantity + shipPrice;
+
+-- get the customer ID based on the email
+select Customer_ID into customerID from customer where Customer_Email=email;
+
+-- insert the order details in orders table
+insert into orders values (orderID, orderDate, customerID, shipMethod, shipDate, orderStatus, totalDue, creditCard, expirationYear, expirationMonth);
+
+-- subtract the number of phones that been ordered in the inventory table
+select Phone_NumberInStock into numberInStock from inventory where Inventory_ID=inventoryID;
+update inventory set Phone_NumberInStock=numberInStock-quantity where Inventory_ID=inventoryID;
+
+-- print out the details of the order
+dbms_output.put_line('order placed');
+dbms_output.put_line('----------');
+dbms_output.put_line('Order date: ' || orderDate);
+dbms_output.put_line('Order ID: ' || orderID);
+dbms_output.put_line('Phone model: ' || phoneModel);
+dbms_output.put_line('Quantity: ' || quantity);
+dbms_output.put_line('Order status: ' || orderStatus);
+dbms_output.put_line('Total due: ' || totalDue);
+	
+-- if there is no phone in the database, print out the following message 
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+dbms_output.put_line('Phone out of stock.');
+
+END;
+
+-- execute the place_order procedure to place an order
+SET SERVEROUTPUT ON;
+-- use a valid phone ID to place an order
+EXEC place_order('jdepp@gmail.com', 1, 1, 'Regular', '1122334455667788', 2017, 9);
+-- use a phone ID that’s not in the database to place an order
+EXEC place_order('jdepp@gmail.com', 15, 1, 'Regular', '1122334455667788', 2017, 9);
+
+-- check if the order information inserted into the database
+select * from orders;
+
+-- check if the inventory table change the number of stock
+select * from inventory;

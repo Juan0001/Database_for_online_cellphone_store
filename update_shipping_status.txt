@@ -1,0 +1,26 @@
+/*
+Update shipping status:
+	Input: order ID, new shipping status and date
+	Output: show the shipping status with shipping date or delivering date
+*/
+-- create procedure to update shipping status
+
+CREATE OR REPLACE PROCEDURE update_shipStatus
+	(
+	orderID int,
+	shipStatus varchar,
+	deliverDate date
+)
+IS
+BEGIN
+	update orders set Order_Status=shipStatus where Order_ID=orderID;
+	update orders set ShipOrDeliverDate=deliverDate where Order_ID=orderID;
+	dbms_output.put_line('Order status:' || shipStatus);
+dbms_output.put_line('Shipping or deliver date:' || deliverDate);
+END;
+
+-- execute the update_shipStatus procedure 
+SET SERVEROUTPUT ON;
+EXEC update_shipStatus (1, 'Delivered', ' 18-NOV-15');
+--check if the ship status updated
+select * from orders;

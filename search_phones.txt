@@ -1,0 +1,70 @@
+/* 
+Customer searching a phone:
+	Input: price range
+	Output: a list of cellphones within the price range and also displays brand, model, price, operating system, screen size, camera resolution, network, RAM size, storage size, battery, and color, and the number of that type of phones in stock.
+*/
+
+-- create a procedure to search for phones
+CREATE OR REPLACE PROCEDURE search_phone
+	(
+	min_price number,
+max_price number
+	)
+IS
+cursor c1 is select Phone_ID, Phone_Brand, Phone_Model, Phone_Price, Phone_OS, Phone_ScreenSize, Phone_CameraResolution, Phone_Network, Phone_RAMSize, Phone_StorageSize, Phone_BatteryLife, Phone_Color, Phone_NumberInStock
+		from phone P, inventory I
+	where P.Inventory_ID = I.Inventory_ID;
+
+ID int;
+Brand varchar(10);
+	Model varchar(20);
+	Price number;
+	OS varchar(10);
+	ScreenSize number;
+	CameraResolution number;
+	Network varchar(10);
+	RAMSize int;
+	StorageSize int;
+	BatteryLife number;
+	Color varchar(10);
+NumberInStock int;
+
+BEGIN
+	-- check if the minimum price is bigger than maximum price
+	-- if yes, let the customer reenter the price range
+	if min_price > max_price then
+		dbms_output.put_line('Please input the correct price range.');
+
+	-- if the price range is correct, get the phone information in the price range
+	else
+open c1;
+loop
+fetch c1 into ID, Brand, Model, Price, OS, ScreenSize, CameraResolution, Network, RAMSize, StorageSize, BatteryLife, Color, NumberInStock;
+exit when c1%notfound;
+if Price >= min_price and Price <= max_price then						dbms_output.put_line('ID: ' || ID);
+
+dbms_output.put_line('Brand: ' || Brand);
+dbms_output.put_line('Model: ' || Model);
+dbms_output.put_line('Price: ' || Price);
+dbms_output.put_line('OS: ' || OS);
+dbms_output.put_line('Sreen size: ' || ScreenSize);
+dbms_output.put_line('Camera resolution: ' || CameraResolution);
+dbms_output.put_line('Network: ' || Network);
+dbms_output.put_line('Ram size: ' || RAMSize);
+dbms_output.put_line('Storage size: ' || StorageSize);
+dbms_output.put_line('Battery Life: ' || BatteryLife);
+dbms_output.put_line('Brand: ' || Color);
+dbms_output.put_line('Number in stock: ' || NumberInStock);
+dbms_output.put_line('----------');
+			end if;
+		end loop;
+		close c1;
+end if;
+END;
+
+-- execute the search_phone procedure to get the phone information
+SET SERVEROUTPUT ON;
+-- use the correct price range
+EXEC search_phone(500, 600);
+-- use the wrong price range to see if error message pops up
+EXEC search_phone(600, 500);

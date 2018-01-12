@@ -1,0 +1,27 @@
+/*
+•	Add phone, phone stock and shipping information in the database by using the basic SQL insert clause.
+•	Other features like customer registration, phone search and phone order will be implemented by PL/SQL statements.
+*/
+
+-- add data to the inventory table
+insert into inventory values(1, 19);
+insert into inventory values(2, 19);
+insert into inventory values(3, 20);
+insert into inventory values(4, 20);
+insert into inventory values(5, 25);
+--  add data to the phone table
+insert into phone values(1, 'Apple', 'iPhone6', '537054913737069', 599.99,  'iOS8', 4.7, 12, '4G LTE', 1, 16, 14, 'White', 1);
+insert into phone values(2, 'Apple', 'iPhone6', '338452014415125', 599.99,  'iOS8', 4.7, 12, '4G', 1, 32, 14, 'White', 2);
+insert into phone values(3, 'SumSung', 'Galaxy S6', '531231161716898', 699.99,  'Android4.4', 5.1, 15.5, '4G LTE', 3, 16, 10, 'White', 3);
+insert into phone values(4, 'SumSung', 'Galaxy S6', '350382689972808', 699.99,  'Android4.5', 5.1, 15.5, '4G', 3, 32, 10, 'White', 4);
+insert into phone values(5, 'HTC', 'One M9','442298445002237', 599.99,  'Androd4.6', 5.1, 20, '4G', 3, 32, 10, 'Golden', 5);
+insert into phone values(6, 'Apple', 'iPhone6', '490339832106529', 599.99,  'iOS8', 4.7, 12, '4G LTE', 1, 16, 14, 'White', 1);
+insert into phone values(7, 'Apple', 'iPhone6', '338943842033692', 599.99,  'iOS8', 4.7, 12, '4G', 1, 32, 14, 'White', 2);
+insert into phone values(8, 'SumSung', 'Galaxy S6', '444513497734265', 699.99,  'Android4.4', 5.1, 15.5, '4G LTE', 3, 16, 10, 'White', 3);
+insert into phone values(9, 'SumSung', 'Galaxy S6', '335933196769762', 699.99,  'Android4.5', 5.1, 15.5, '4G', 3, 32, 10, 'White', 4);
+insert into phone values(10, 'HTC', 'One M9','302920720015696', 599.99,  'Androd4.6', 5.1, 20, '4G', 3, 32, 10, 'Golden', 5);
+
+
+-- add shipping method to the shipping table
+insert into shipping values('Regular', 5);
+insert into shipping values('Express', 20);

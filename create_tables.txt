@@ -1,0 +1,100 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\froman\fcharset0 TimesNewRomanPSMT;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\ri0\partightenfactor0
+
+\f0\fs24 \cf0 -- drop tables first in case they exist\
+drop table order_line;\
+drop table orders;\
+drop table shipping;\
+drop table phone;\
+drop table inventory;\
+drop table customer;\
+\
+-- create the customer table to store the customer information 
+\f1 \
+
+\f0 create table customer (\
+	Customer_ID int,\
+	Customer_Name varchar(30),\
+	Customer_Email varchar(50),\
+	Customer_Password varchar(20),\
+	Customer_PhoneNumber char(10),\
+	Customer_Address varchar(50),\
+	Customer_City varchar(20),\
+	Customer_State char(2),\
+	Customer_Zip char(5),\
+	primary key (Customer_ID)\
+);\
+\
+-- create inventory table to store the stock information of phones\
+create table inventory (\
+	Inventory_ID int,\
+\pard\pardeftab720\fi720\ri0\partightenfactor0
+\cf0 Phone_NumberInStock int,\
+\pard\pardeftab720\ri0\partightenfactor0
+
+\f1 \cf0 	
+\f0 primary key (Inventory_ID)\
+);\
+\
+\
+-- create phone table to store the phone information\
+create table phone (\
+	Phone_ID int,\
+	Phone_Brand varchar(10),\
+	Phone_Model varchar(20),\
+	Phone_IMEI char(15),\
+	Phone_Price number,\
+	Phone_OS varchar(10),\
+	Phone_ScreenSize number,\
+	Phone_CameraResolution number,\
+	Phone_Network varchar(10),\
+	Phone_RAMSize int,\
+	Phone_StorageSize int,\
+	Phone_BatteryLife number,\
+	Phone_Color varchar(10),\
+	Inventory_ID int,\
+	primary key (Phone_ID),\
+\pard\pardeftab720\fi720\ri0\partightenfactor0
+\cf0 foreign key (Inventory_ID) references inventory (Inventory_ID)\
+\pard\pardeftab720\ri0\partightenfactor0
+\cf0 );\
+\
+-- create shipping table to store the shipping information\
+create table shipping (\
+	Ship_Method varchar(10),\
+	Ship_Price number,\
+	primary key (Ship_Method)\
+);\
+\
+-- create orders table to store the order information\
+create table orders (\
+	Order_ID int,\
+	Order_Date date,\
+	Customer_ID int,\
+	Ship_Method varchar(10),\
+	ShipOrDeliverDate date,\
+	Order_Status varchar(15),\
+	Order_TotalDue number,\
+	Order_CreditNumber varchar(20),\
+	Order_CreditExpirationYear int,\
+	Order_CreditExpirationMonth int,\
+	primary key (Order_ID),\
+	foreign key (Customer_ID) references customer (Customer_ID),\
+	foreign key (Ship_Method) references shipping (Ship_Method)\
+);\
+\
+-- create order_line table to store the phones in each order \
+create table order_line (\
+	Order_ID int,\
+	Phone_ID int,\
+	OrderLine_Quantity int,\
+	primary key (Order_ID, Phone_ID),\
+	foreign key (Order_ID) references orders (Order_ID),\
+	foreign key (Phone_ID) references phone (Phone_ID)\
+);\
+}

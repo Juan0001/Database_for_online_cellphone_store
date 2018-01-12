@@ -1,0 +1,57 @@
+/*  
+New customer registration:
+	Input: name, email address, password, home address, phone number
+	Output: if the customer successfully registered, a message with “registration successful” will be shown; if the email is taken, a message with “User exist, please use another email.” will be shown. 
+*/
+
+-- create sequence to automatically generate customer id during insert
+DROP SEQUENCE cid_seq;
+CREATE SEQUENCE cid_seq START WITH 1;
+
+-- customer registration: 
+-- collect information from the user and insert to customer table 
+
+CREATE OR REPLACE PROCEDURE customer_register
+	(
+	name varchar,
+	email varchar,
+	password varchar,
+	phonenumber char,
+	address varchar,
+	city varchar,
+	state char,
+	zip char
+	)
+IS
+id int;
+exists_email number;
+BEGIN
+	
+-- get the automatically generated customer ID
+select cid_seq.nextval into id from dual;
+
+-- check if an email exists
+select 1 into exists_email from dual
+where exists (select Customer_Email from customer where Customer_Email=email);
+
+-- if email exists, print out the following message
+dbms_output.put_line('User exist, please use another email.');
+
+-- if email doesn’t exist, add customer information in the database
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+insert into customer values (id, name, email, password, phonenumber, address, city, state, zip);
+dbms_output.put_line('registration successful');
+	
+	
+END;
+
+-- execute procedure when customer input their information 
+SET SERVEROUTPUT ON;
+-- register the customer for the first time
+EXEC customer_register('Johnny Depp', 'jdepp@gmail.com', 'osAt023', '3345463235',  '133 Luck Road', 'New York', 'NY', '12321');	
+-- try to use the same customer email to see if error message pops up
+EXEC customer_register('Johnny Depp', 'jdepp@gmail.com', 'osAt023', '3345463235',  '133 Luck Road', 'New York', 'NY', '12321');
+
+-- check if the customer information inserted in the database
+select * from customer;
